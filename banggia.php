@@ -6,7 +6,8 @@ include 'head.php';
 <div class="container">
     <div class="row">
         <center><h1><a href="/">Thuê Bot Online tại <?php echo $hometom; ?></a></h1></center>
-        <center><h2><?php echo $title; ?></h2></center><br/>
+        <center><h2><?php echo $titl;e ?sdfsd
+        ></h2></center><br/>
 
         <div class="panel panel-primary">
 
