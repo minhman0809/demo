@@ -14,9 +14,18 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "axios": "^0.18.0",
+    "firebase": "^5.5.5",
     "vue": "^2.5.2",
+    "vue-axios": "^2.1.4",
+    "vue-currency-filter": "^3.1.0",
+    "vue-headful": "^2.0.1",
     "vue-router": "^3.0.1",
-    "vuetify": "^1.0.0"
+    "vue-tel-input": "^2.0.8",
+    "vuetify": "^1.0.0",
+    "vuex": "^3.0.1",
+    "vuex-i18n": "^1.10.5",
+    "vuex-persistedstate": "^2.5.4"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
