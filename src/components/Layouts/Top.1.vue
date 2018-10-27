@@ -4,10 +4,10 @@
       <v-layout column align-center>
         <img src="@/assets/logo.png" alt="Vuetify.js" class="mb-5">
         <blockquote>
-          &#8220;First, solve the problem. Th en, write the code.&#8221;
+          &#8220;trsasgfdssdf s afs .&#8221;
           <footer>
             <small>
-              <em>&mdash;John Fbarnce2Fbarnce2Fbarnce2</em>
+              <em>&mdash;John Fbarnce2F barnce2Fbarnce2</em>
             </small>
           </footer>
         </blockquote>
