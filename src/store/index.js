@@ -181,7 +181,7 @@ export const store = new Vuex.Store({
     getUser({ commit, state }) {
       axios
         .get(
-          'http://103.42.58.128:5000/api/1.0/users/me',
+          'https://api.fxce.net/api/1.0/users/me',
           JSON.parse(localStorage.getItem('config'))
         )
         .then(response => {
@@ -207,7 +207,7 @@ export const store = new Vuex.Store({
     async getUserInfo({ commit }, payload) {
       await axios
         .get(
-          'http://103.42.58.128:5000/api/1.0/users/me',
+          'https://api.fxce.net/api/1.0/users/me',
           JSON.parse(localStorage.getItem('config'))
         )
         .then(response => {
@@ -223,7 +223,7 @@ export const store = new Vuex.Store({
     async getDocumentInfo({ commit }, payload) {
       await axios
         .get(
-          'http://103.42.58.128:5000/api/1.0/users/document',
+          'https://api.fxce.net/api/1.0/users/document',
           JSON.parse(localStorage.getItem('config'))
         )
         .then(response => {
@@ -350,7 +350,7 @@ export const store = new Vuex.Store({
       console.log('current token', JSON.parse(localStorage.getItem('config')))
       axios
         .post(
-          'http://103.42.58.128:5000/api/1.0/users',
+          'https://api.fxce.net/api/1.0/users',
           {},
           JSON.parse(localStorage.getItem('config'))
         )
@@ -366,7 +366,7 @@ export const store = new Vuex.Store({
     getRealAccounts({ commit, state }) {
       axios
         .get(
-          'http://103.42.58.128:5000/api/1.0/real-accounts',
+          'https://api.fxce.net/api/1.0/real-accounts',
           JSON.parse(localStorage.getItem('config'))
         )
         .then(resp => {
@@ -380,7 +380,7 @@ export const store = new Vuex.Store({
     createRealAccount({ commit, dispatch, state }, payload) {
       axios
         .post(
-          'http://103.42.58.128:5000/api/1.0/real-accounts/generate',
+          'https://api.fxce.net/api/1.0/real-accounts/generate',
           payload,
           JSON.parse(localStorage.getItem('config'))
         )
@@ -392,14 +392,14 @@ export const store = new Vuex.Store({
         })
     },
     getOneRealAccount({ commit, state }, payload) {
-      let url = 'http://103.42.58.128:5000/api/1.0/real-accounts/' + payload.id
+      let url = 'https://api.fxce.net/api/1.0/real-accounts/' + payload.id
       axios
         .get(url, JSON.parse(localStorage.getItem('config')))
         .then(resp => {})
     },
     changeLeverageRealAccount({ commit, dispatch, state }, payload) {
       let url =
-        'http://103.42.58.128:5000/api/1.0/real-accounts/' +
+        'https://api.fxce.net/api/1.0/real-accounts/' +
         payload.id +
         '/change-leverage'
       axios
@@ -410,7 +410,7 @@ export const store = new Vuex.Store({
     },
     changePasswordRealAccount({ commit, state }, payload) {
       let url =
-        'http://103.42.58.128:5000/api/1.0/real-accounts/' +
+        'https://api.fxce.net/api/1.0/real-accounts/' +
         payload.id +
         '/change-password'
       axios
@@ -420,7 +420,7 @@ export const store = new Vuex.Store({
     getDemoAccounts({ commit, state }) {
       axios
         .get(
-          'http://103.42.58.128:5000/api/1.0/demo-accounts',
+          'https://api.fxce.net/api/1.0/demo-accounts',
           JSON.parse(localStorage.getItem('config'))
         )
         .then(resp => {
@@ -431,7 +431,7 @@ export const store = new Vuex.Store({
     createDemoAccount({ commit, state, dispatch }, payload) {
       axios
         .post(
-          'http://103.42.58.128:5000/api/1.0/demo-accounts',
+          'https://api.fxce.net/api/1.0/demo-accounts',
           payload,
           JSON.parse(localStorage.getItem('config'))
         )
@@ -440,14 +440,14 @@ export const store = new Vuex.Store({
         })
     },
     getOneDemoAccount({ commit, state }, payload) {
-      let url = 'http://103.42.58.128:5000/api/1.0/demo-accounts/' + payload.id
+      let url = 'https://api.fxce.net/api/1.0/demo-accounts/' + payload.id
       axios
         .get(url, JSON.parse(localStorage.getItem('config')))
         .then(resp => {})
     },
     changeLeverageDemoAccount({ commit, state, dispatch }, payload) {
       let url =
-        'http://103.42.58.128:5000/api/1.0/demo-accounts/' +
+        'https://api.fxce.net/api/1.0/demo-accounts/' +
         payload.id +
         '/change-leverage'
       axios
@@ -458,7 +458,7 @@ export const store = new Vuex.Store({
     },
     changePasswordDemoAccount({ commit, state }, payload) {
       let url =
-        'http://103.42.58.128:5000/api/1.0/demo-accounts/' +
+        'https://api.fxce.net/api/1.0/demo-accounts/' +
         payload.id +
         '/change-password'
       axios
@@ -467,14 +467,14 @@ export const store = new Vuex.Store({
     },
     // API Server & Platform
     getServer({ commit, state }) {
-      let url = 'http://103.42.58.128:5000/api/1.0/servers'
+      let url = 'https://api.fxce.net/api/1.0/servers'
       axios.get(url, JSON.parse(localStorage.getItem('config'))).then(resp => {
         let data = resp.data
         commit('setServers', data)
       })
     },
     getPlatform({ commit, state }) {
-      let url = 'http://103.42.58.128:5000/api/1.0/platforms'
+      let url = 'https://api.fxce.net/api/1.0/platforms'
       axios.get(url, JSON.parse(localStorage.getItem('config'))).then(resp => {
         let data = resp.data
         commit('setPlatforms', data)
