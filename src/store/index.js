@@ -1,24 +1,24 @@
 /* eslint-disable */
-import Vue from 'vue'
-import Vuex from 'vuex'
-import axios from 'axios'
-import VueAxios from 'vue-axios'
-import firebase from 'firebase'
-import routes from '../router'
-import VueRouter from 'vue-router'
-import vuexI18n from 'vuex-i18n'
-import createPersistedState from 'vuex-persistedstate'
-import 'vue-tel-input/dist/vue-tel-input.css'
-import VueTelInput from 'vue-tel-input'
+import Vue from 'vue';
+import Vuex from 'vuex';
+import axios from 'axios';
+import VueAxios from 'vue-axios';
+import firebase from 'firebase';
+import routes from '../router';
+import VueRouter from 'vue-router';
+import vuexI18n from 'vuex-i18n';
+import createPersistedState from 'vuex-persistedstate';
+import 'vue-tel-input/dist/vue-tel-input.css';
+import VueTelInput from 'vue-tel-input';
 
-Vue.use(VueTelInput)
+Vue.use(VueTelInput);
 
 // Define custom validation rule
 
-import translationsEn from '../components/locals/en.json'
-import translationsVi from '../components/locals/vi.json'
+import translationsEn from '../components/locals/en.json';
+import translationsVi from '../components/locals/vi.json';
 
-import VueCurrencyFilter from 'vue-currency-filter'
+import VueCurrencyFilter from 'vue-currency-filter';
 Vue.use(VueCurrencyFilter, {
   symbol: '$',
   thousandsSeparator: '.',
@@ -26,32 +26,24 @@ Vue.use(VueCurrencyFilter, {
   fractionSeparator: ',',
   symbolPosition: 'front',
   symbolSpacing: true
-})
+});
 
-Vue.use(Vuex)
-Vue.use(VueAxios, axios)
-Vue.use(VueRouter)
+Vue.use(Vuex);
+Vue.use(VueAxios, axios);
+Vue.use(VueRouter);
 
 export const store = new Vuex.Store({
   state: {
-    messageStr: '',
+    isLoadingPage: false,
     isIdle: false,
-    isLoadingPage: true,
     config: {
       headers: {
         Authorization: ''
       }
     },
-    documentInfo: '',
-    UserInfo: '',
     userFullInfoStatus: '',
     fallback: 'en',
     locale: 'en',
-    user: null,
-    error: '',
-    errorSignIn: '',
-    errorSignUp: '',
-    loading: false,
     deposit: {
       currentTab: 'deposit'
     },
@@ -67,456 +59,257 @@ export const store = new Vuex.Store({
       servers: '',
       platforms: ''
     },
-    currentEmail: ''
+    slideCurrency: '',
+    lastLoginAt: '',
+    // Firebase
+    loading: false,
+    user: null,
+    error: '',
+    errorSignIn: '',
+    errorSignUp: '',
+    errorForgot: '',
+    currentEmail: null
   },
+
   plugins: [
     createPersistedState({
-      paths: ['error', 'isLoadingPage']
+      paths: ['isLoadingPage']
     })
   ],
   mutations: {
-    depositTab(state) {
-      state.deposit.currentTab = 'deposit'
-    },
-    changeActive(state) {
-      state.isActive = false
-    },
-    setDocumentStatus(state, payload) {
-      state.documentInfo.status = payload
-    },
-    setUserInfo(state, payload) {
-      state.UserInfo = payload
-      if (
-        payload.fullname != null &&
-        payload.email != null &&
-        payload.first_name != null &&
-        payload.last_name != null &&
-        payload.country != null &&
-        payload.date_birth != null &&
-        payload.mobile != null &&
-        payload.address_1 != null &&
-        payload.city != null &&
-        payload.state != null &&
-        payload.secret_question != null &&
-        payload.answer != null
-      ) {
-        localStorage.setItem('userFullInfoStatus', true)
-        state.userFullInfoStatus = true
-      } else {
-        localStorage.setItem('userFullInfoStatus', false)
-        state.userFullInfoStatus = false
-      }
-    },
-    setDocumentInfo(state, payload) {
-      var result = {
-        message: 'Document is not upload'
-      }
-      if (payload == result) {
-        state.documentInfo = payload
-        state.documentInfo = {}
-        localStorage.setItem('documentInfoStatus', '')
-      } else {
-        state.documentInfo = payload
-        localStorage.setItem('documentInfoStatus', payload.status)
-      }
-    },
-    setToken(state, payload) {
-      state.config.headers.Authorization = payload
-    },
+    // translate
     setCulture(state, payload) {
-      state.locale = payload
-      Vue.i18n.set(state.locale)
+      state.locale = payload;
+      Vue.i18n.set(state.locale);
+    },
+    // Performance
+    setIsLoadingPage(state, payload) {
+      state.isLoadingPage = payload.set;
     },
     // Authentication
+    setToken(state, payload) {
+      state.config.headers.Authorization = payload;
+    },
     setUser(state, payload) {
-      state.user = payload
+      state.user = payload;
+    },
+    setCurrentEmail(state, payload) {
+      state.currentEmail = payload;
     },
     setError(state, payload) {
-      state.error = payload
+      state.error = payload;
     },
     setErrorSignIn(state, payload) {
-      state.errorSignIn = payload
+      state.errorSignIn = payload;
     },
     setErrorSignUp(state, payload) {
-      state.errorSignUp = payload
+      state.errorSignUp = payload;
+    },
+    setErrorForgot(state, payload) {
+      state.errorForgot = payload;
     },
     resetError(state, payload) {
-      state.error = ''
+      state.error = '';
+    },
+    resetCurrentEmail(state) {
+      state.currentEmail = null;
     },
     resetErrorSignIn(state, payload) {
-      state.errorSignIn = ''
+      state.errorSignIn = '';
     },
     resetErrorSignUp(state, payload) {
-      state.errorSignUp = ''
+      state.errorSignUp = '';
+    },
+    resetErrorForgot(state, payload) {
+      state.errorForgot = '';
     },
     setLoading(state, payload) {
-      state.loading = payload
-    },
-    // Change active class for tabs
-    setCurrentTab(state, payload) {
-      state.deposit.currentTab = payload
-    },
-    setDashboardTab(state, payload) {
-      state.dashboard.currentTab = payload
-    },
-    // Api
-    setRealAccounts(state, payload) {
-      state.account.realAccounts = payload
-    },
-    setDemoAccounts(state, payload) {
-      state.account.demoAccounts = payload
-    },
-    setServers(state, payload) {
-      state.data.servers = payload
-    },
-    setPlatforms(state, payload) {
-      state.data.platforms = payload
+      state.loading = payload;
     }
   },
   actions: {
-    getIsLoadingPage({ commit, state }) {
-      // commit ('setIsLoadingPage', false)
-      state.isLoadingPage = false
-    },
-    getUser({ commit, state }) {
-      axios
-        .get(
-          'https://api.fxce.net/api/1.0/users/me',
-          JSON.parse(localStorage.getItem('config'))
-        )
-        .then(response => {
-          if (response.data == {}) {
-            state.status = 'uncreate'
-          }
-          // if (response.data.id) {
-          //   this.UserId = response.data.id
-          // }
+    getNewToken() {
+      firebase
+        .auth()
+        .currentUser.getIdToken(true)
+        .then(async data => {
+          console.log('Get new token success');
         })
-        .catch(function() {})
+        .catch(error => {
+          console.log('Error get new token', error);
+        });
     },
-    defaultDepositTab({ commit }) {
-      console.log('default deposit')
-      commit('depositTab')
-    },
-    getToggle({ commit }, payload) {
-      commit('setToggle', payload)
-    },
-    getDocumentStatus({ commit }, payload) {
-      commit('setDocumentStatus', payload)
-    },
-    async getUserInfo({ commit }, payload) {
-      await axios
-        .get(
-          'https://api.fxce.net/api/1.0/users/me',
-          JSON.parse(localStorage.getItem('config'))
-        )
-        .then(response => {
-          if (response.data) {
-            commit('setUserInfo', response.data)
-          }
-        })
-        .catch(function() {
-          console.log('FAILURE TO GET getUserInfo!!')
-          commit('setUserInfo', {})
-        })
-    },
-    async getDocumentInfo({ commit }, payload) {
-      await axios
-        .get(
-          'https://api.fxce.net/api/1.0/users/document',
-          JSON.parse(localStorage.getItem('config'))
-        )
-        .then(response => {
-          console.log('ok getDocumentInfo')
-          commit('setDocumentInfo', response.data)
-        })
-        .catch(function() {
-          commit('setDocumentInfo', {})
-        })
-    },
-    initializeToken({ commit }, payload) {
-      commit('setToken', payload)
-    },
-    // Translate
-    changeCulture({ commit }, payload) {
-      commit('setCulture', payload)
-    },
-    // Authentication Actions
     userSignUp({ commit, state, dispatch }, payload) {
-      commit('setLoading', true)
+      commit('setIsLoadingPage', {
+        set: true
+      });
+      commit('setLoading', true);
       firebase
         .auth()
         .createUserWithEmailAndPassword(payload.email, payload.password)
         .then(async firebaseUser => {
           commit('setUser', {
             email: firebaseUser.email
-          })
-          commit('setLoading', false)
-          let user = firebase.auth().currentUser
+          });
+          commit('setLoading', false);
+
+          await firebase
+            .auth()
+            .signInWithEmailAndPassword(payload.email, payload.password)
+            .then(async function(firebaseUser) {
+              // Refresh token after 55'(3300s)
+              commit('setUser', {
+                email: firebaseUser.email
+              });
+              commit('setLoading', false);
+              commit('setError', null);
+              // commit('setCurrentEmail', firebase.auth().currentUser.email)
+              await firebase
+                .auth()
+                .currentUser.getIdToken(true)
+                .then(async data => {
+                  // console.log('gettoken');
+                  let myconfig = {
+                    headers: {
+                      Authorization: 'Bearer ' + data
+                    }
+                  };
+                  localStorage.setItem('config', JSON.stringify(myconfig));
+                  resultToken = true;
+                })
+                .catch(error => {
+                  // Error tao acc moi, Hoac acc da ton tai
+                  commit('setErrorSignIn', error.message);
+                  commit('setLoading', false);
+                });
+            })
+            .catch(error => {
+              resultToken = false;
+              // ERROR login
+              commit('setErrorSignIn', error.message);
+              commit('setIsLoadingPage', {
+                set: false
+              });
+            });
+
+          let user = firebase.auth().currentUser;
           user
             .sendEmailVerification()
             .then(function() {})
             .catch(function(error) {
-              commit('setErrorSignUp', error.message)
-            })
+              commit('setErrorSignUp', error.message);
+            });
           commit(
             'setErrorSignUp',
             'Create account successfully. Please verify your email'
-          )
-          await dispatch('userSignOut')
+          );
+          await dispatch('userSignOut');
+          commit('setIsLoadingPage', {
+            set: false
+          });
         })
         .catch(error => {
-          commit('setErrorSignUp', error.message)
-        })
+          commit('setErrorSignUp', error.message);
+          commit('setIsLoadingPage', {
+            set: false
+          });
+        });
     },
-    async userSignIn({ commit, dispatch, state }, payload) {
-      commit('setLoading', true)
-      var resultToken = false
+    async userSignIn({ commit, dispatch }, payload) {
+      console.log('sign in');
+      commit('setLoading', true);
+      commit('setIsLoadingPage', {
+        set: true
+      });
+      var resultToken = false;
       await firebase
         .auth()
         .signInWithEmailAndPassword(payload.email, payload.password)
-        .then(function(firebaseUser) {
-          // Refresh token after 55'(3300s)
-          setTimeout(function() {
-            dispatch('getNewToken')
-          }, 3300000)
+        .then(async function(firebaseUser) {
+          let expirationTime = new Date().getTime() + 15 * 60000;
+          localStorage.setItem('expirationTime', expirationTime);
+          // Delete get new token here
+          // setInterval(function() {
+          //   dispatch('getNewToken');
+          // }, 3300000);
           commit('setUser', {
             email: firebaseUser.email
-          })
-          commit('setLoading', false)
-          commit('setError', null)
-          console.log('sign in')
-          state.currentEmail = firebase.auth().currentUser.email
-          firebase
+          });
+          commit('setLoading', false);
+          commit('setError', null);
+          localStorage.setItem(
+            'currentEmail',
+            firebase.auth().currentUser.email
+          );
+          await firebase
             .auth()
             .currentUser.getIdToken()
             .then(async data => {
-              console.log('gettoken')
+              // console.log('gettoken');
               let myconfig = {
                 headers: {
                   Authorization: 'Bearer ' + data
                 }
-              }
-              localStorage.setItem('config', JSON.stringify(myconfig))
-              resultToken = true
-              // dispatch('getRealAccounts')
-              if (firebase.auth().currentUser.emailVerified) {
-                // routes.go('/')
-                await store.dispatch('createUser')
-                routes.replace('/')
-              } else {
-                console.log('Have to verify')
-                commit('setErrorSignIn', 'You have to verify email.')
-                // state.emailVerified = false
-                // state.UserInfo.email = 'fail'
-                await dispatch('userSignOut')
-              }
+              };
+              localStorage.setItem('config', JSON.stringify(myconfig));
+              resultToken = true;
+              routes.replace('/');
+              // if (firebase.auth().currentUser.emailVerified) {
+              //   // await Promise.all([
+              //   //   store.dispatch('getUserInfo'),
+              //   //   store.dispatch('getDocumentInfo')
+              //   // ]);
+              // } else {
+              //   // console.log('Have to verify');
+              //   commit('setErrorSignIn', 'You have to verify email.');
+              //   await dispatch('userSignOut');
+              //   commit('setIsLoadingPage', {
+              //     set: false
+              //   });
+              // }
             })
             .catch(error => {
-              commit('setErrorSignIn', error.message)
-              commit('setLoading', false)
-            })
+              commit('setErrorSignIn', error.message);
+              commit('setLoading', false);
+              commit('setIsLoadingPage', {
+                set: false
+              });
+            });
         })
         .catch(error => {
-          resultToken = false
-          console.log(error)
-          commit('setErrorSignIn', error.message)
-        })
-
-      routes.replace('/')
+          resultToken = false;
+          commit('setErrorSignIn', error.message);
+          commit('setIsLoadingPage', { set: false });
+        });
     },
     autoSignIn({ commit }, payload) {
       commit('setUser', {
         email: payload.email
-      })
+      });
     },
-    userSignOut({ commit, state }) {
-      localStorage.removeItem('config')
-      localStorage.removeItem('documentInfoStatus')
-      localStorage.removeItem('userFullInfoStatus')
-      localStorage.removeItem('userFullInfoStatusLocalStorage')
-      firebase.auth().signOut()
-      commit('setUser', null)
-      routes.replace('/home')
-    },
-    // Execute changing tab in Deposit
-    changeDepositTab({ commit }, payload) {
-      commit('setCurrentTab', payload)
-    },
-    changeDashboardTab({ commit }, payload) {
-      commit('setDashboardTab', payload)
-    },
-    createUser({ commit, dispatch, state }) {
-      console.log('current token', JSON.parse(localStorage.getItem('config')))
-      axios
-        .post(
-          'https://api.fxce.net/api/1.0/users',
-          {},
-          JSON.parse(localStorage.getItem('config'))
-        )
-        .then(resp => {
-          console.log('creating user')
-        })
-        .catch(error => {
-          console.log(error)
-          console.log('error creating user', error.message)
-        })
-    },
-    // Implement Get & Post Api
-    getRealAccounts({ commit, state }) {
-      axios
-        .get(
-          'https://api.fxce.net/api/1.0/real-accounts',
-          JSON.parse(localStorage.getItem('config'))
-        )
-        .then(resp => {
-          let data = resp.data.real_accounts
-          commit('setRealAccounts', data)
-        })
-        .catch(error => {
-          commit('setRealAccounts', [])
-        })
-    },
-    createRealAccount({ commit, dispatch, state }, payload) {
-      axios
-        .post(
-          'https://api.fxce.net/api/1.0/real-accounts/generate',
-          payload,
-          JSON.parse(localStorage.getItem('config'))
-        )
-        .then(resp => {
-          dispatch('getRealAccounts')
-        })
-        .catch(error => {
-          console.log(error)
-        })
-    },
-    getOneRealAccount({ commit, state }, payload) {
-      let url = 'https://api.fxce.net/api/1.0/real-accounts/' + payload.id
-      axios
-        .get(url, JSON.parse(localStorage.getItem('config')))
-        .then(resp => {})
-    },
-    changeLeverageRealAccount({ commit, dispatch, state }, payload) {
-      let url =
-        'https://api.fxce.net/api/1.0/real-accounts/' +
-        payload.id +
-        '/change-leverage'
-      axios
-        .put(url, payload.data, JSON.parse(localStorage.getItem('config')))
-        .then(resp => {
-          dispatch('getRealAccounts')
-        })
-    },
-    changePasswordRealAccount({ commit, state }, payload) {
-      let url =
-        'https://api.fxce.net/api/1.0/real-accounts/' +
-        payload.id +
-        '/change-password'
-      axios
-        .put(url, payload.data, JSON.parse(localStorage.getItem('config')))
-        .then(resp => {})
-    },
-    getDemoAccounts({ commit, state }) {
-      axios
-        .get(
-          'https://api.fxce.net/api/1.0/demo-accounts',
-          JSON.parse(localStorage.getItem('config'))
-        )
-        .then(resp => {
-          let data = resp.data
-          commit('setDemoAccounts', data)
-        })
-    },
-    createDemoAccount({ commit, state, dispatch }, payload) {
-      axios
-        .post(
-          'https://api.fxce.net/api/1.0/demo-accounts',
-          payload,
-          JSON.parse(localStorage.getItem('config'))
-        )
-        .then(resp => {
-          dispatch('getDemoAccounts')
-        })
-    },
-    getOneDemoAccount({ commit, state }, payload) {
-      let url = 'https://api.fxce.net/api/1.0/demo-accounts/' + payload.id
-      axios
-        .get(url, JSON.parse(localStorage.getItem('config')))
-        .then(resp => {})
-    },
-    changeLeverageDemoAccount({ commit, state, dispatch }, payload) {
-      let url =
-        'https://api.fxce.net/api/1.0/demo-accounts/' +
-        payload.id +
-        '/change-leverage'
-      axios
-        .put(url, payload.data, JSON.parse(localStorage.getItem('config')))
-        .then(resp => {
-          dispatch('getDemoAccounts')
-        })
-    },
-    changePasswordDemoAccount({ commit, state }, payload) {
-      let url =
-        'https://api.fxce.net/api/1.0/demo-accounts/' +
-        payload.id +
-        '/change-password'
-      axios
-        .get(url, payload.password, JSON.parse(localStorage.getItem('config')))
-        .then(resp => {})
-    },
-    // API Server & Platform
-    getServer({ commit, state }) {
-      let url = 'https://api.fxce.net/api/1.0/servers'
-      axios.get(url, JSON.parse(localStorage.getItem('config'))).then(resp => {
-        let data = resp.data
-        commit('setServers', data)
-      })
-    },
-    getPlatform({ commit, state }) {
-      let url = 'https://api.fxce.net/api/1.0/platforms'
-      axios.get(url, JSON.parse(localStorage.getItem('config'))).then(resp => {
-        let data = resp.data
-        commit('setPlatforms', data)
-      })
-    },
-    updatePassword({ commit }, payload) {
-      let user = firebase.auth().currentUser
-      user
-        .updatePassword(payload)
-        .then(function() {
-          // Update successful
-        })
-        .catch(function(error) {
-          alert('You have to re-sign in!')
-          // An error happened
-        })
-    },
-    getNewToken() {
-      firebase
-        .auth()
-        .currentUser.getIdToken(true)
-        .then(async data => {
-          console.log('Get new token success')
-        })
-        .catch(error => {
-          alert('Error get new token', error.message)
-        })
-    },
-    test() {
-      console.log('hello')
+    async userSignOut({ commit, state }) {
+      await firebase.auth().signOut();
+      localStorage.clear();
+      // localStorage.removeItem('config');
+      // localStorage.removeItem('documentInfoStatus');
+      // localStorage.removeItem('userFullInfoStatus');
+      // localStorage.removeItem('userFullInfoStatusLocalStorage');
+      // localStorage.removeItem('expirationTime');
+      commit('resetCurrentEmail');
+      commit('setUser', null);
+      await routes.replace('/login');
     }
   },
   getters: {
     isAuthenticated(state) {
-      return state.user !== null && state.user !== undefined
+      return state.user !== null && state.user !== undefined;
     }
   }
-})
+});
 
-Vue.use(vuexI18n.plugin, store)
+Vue.use(vuexI18n.plugin, store);
 
-Vue.i18n.add('en', translationsEn)
-Vue.i18n.add('vi', translationsVi)
+Vue.i18n.add('en', translationsEn);
+Vue.i18n.add('vi', translationsVi);
 
-Vue.i18n.set('en')
+Vue.i18n.set('en');
